@@ -1,8 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS `optica cul d'ampolla` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `optica cul d'ampolla`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: optica cul d'ampolla
+-- Host: localhost    Database: optica cul d'ampolla
 -- ------------------------------------------------------
 -- Server version	8.0.39
 
@@ -31,7 +29,10 @@ CREATE TABLE `cliente` (
   `telefono` int NOT NULL,
   `correo_electronico` varchar(45) NOT NULL,
   `fecha_registro` date NOT NULL,
-  PRIMARY KEY (`id_cliente`)
+  `id_cliente_recomendado` int DEFAULT NULL,
+  PRIMARY KEY (`id_cliente`),
+  KEY `fk_cliente_recomendacion_idx` (`id_cliente_recomendado`),
+  CONSTRAINT `fk_cliente_recomendacion` FOREIGN KEY (`id_cliente_recomendado`) REFERENCES `cliente` (`id_cliente`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -41,7 +42,7 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES (1,'Santiago',8001,664328723,'santia2go19@gmail.com','2019-06-20'),(2,'Ximena',8005,650101222,'x_mena32@gmai.com','2019-07-12'),(3,'Manuel',8003,677403906,'manuelulleras2@gmail.com','2019-10-19'),(4,'Erika',8001,61975320,'rioserika90@gmail.com','2020-01-05');
+INSERT INTO `cliente` VALUES (1,'Santiago',8001,664328723,'santia2go19@gmail.com','2019-06-20',NULL),(2,'Ximena',8005,650101222,'x_mena32@gmai.com','2019-07-12',1),(3,'Manuel',8003,677403906,'manuelulleras2@gmail.com','2019-10-19',2),(4,'Erika',8001,61975320,'rioserika90@gmail.com','2020-01-05',3);
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,9 +120,14 @@ CREATE TABLE `gafas` (
   `color izq` varchar(10) NOT NULL,
   `color der` varchar(10) NOT NULL,
   `precio` int NOT NULL,
+  `numero_proveedor` int DEFAULT NULL,
   PRIMARY KEY (`idGafas`),
   KEY `fk_tipo_montura_gafas_idx` (`tipo_montura`),
-  CONSTRAINT `fk_tipo_montura_gafas` FOREIGN KEY (`tipo_montura`) REFERENCES `tipo_marco` (`id_tipo_marco`) ON DELETE RESTRICT ON UPDATE CASCADE
+  KEY `fk_gafas_proveedor_idx` (`Marca`),
+  KEY `fk_gafas_proveedor` (`idGafas`),
+  KEY `fk_tproveedor_gafas_idx` (`numero_proveedor`),
+  CONSTRAINT `fk_tipo_montura_gafas` FOREIGN KEY (`tipo_montura`) REFERENCES `tipo_marco` (`id_tipo_marco`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_tproveedor_gafas` FOREIGN KEY (`numero_proveedor`) REFERENCES `proveedor` (`IdProveedor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -131,7 +137,7 @@ CREATE TABLE `gafas` (
 
 LOCK TABLES `gafas` WRITE;
 /*!40000 ALTER TABLE `gafas` DISABLE KEYS */;
-INSERT INTO `gafas` VALUES (1,'Ray Ban',4,2,2,'Negro','sin color','sin color',60),(2,'barckey',2,3,1,'Dorado','dorado','dorado',40),(3,'Ray Ban',1,3,3,'Azul','sin color','sin color',70),(4,'Ray Ban',2,1,2,'cafe','sin color','sin color',50);
+INSERT INTO `gafas` VALUES (1,'Ray Ban',4,2,2,'Negro','sin color','sin color',60,1),(2,'barckey',2,3,1,'Dorado','dorado','dorado',40,2),(3,'Ray Ban',1,3,3,'Azul','sin color','sin color',70,1),(4,'Ray Ban',2,1,2,'cafe','sin color','sin color',50,1);
 /*!40000 ALTER TABLE `gafas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,10 +155,10 @@ CREATE TABLE `proveedor` (
   `telefono` int NOT NULL,
   `fax` int NOT NULL,
   `NIF` varchar(9) NOT NULL,
+  `numero_gafas` int NOT NULL,
   PRIMARY KEY (`IdProveedor`),
   KEY `fk_direccion_proveedor_idx` (`direccion`),
-  CONSTRAINT `fk_direccion_proveedor` FOREIGN KEY (`direccion`) REFERENCES `direccion` (`id_Direccion`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `fk_marca_gafas` FOREIGN KEY (`IdProveedor`) REFERENCES `gafas` (`idGafas`) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT `fk_direccion_proveedor` FOREIGN KEY (`direccion`) REFERENCES `direccion` (`id_Direccion`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -162,7 +168,7 @@ CREATE TABLE `proveedor` (
 
 LOCK TABLES `proveedor` WRITE;
 /*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
-INSERT INTO `proveedor` VALUES (1,'Ray Ban',1,92313812,92138121,'64920195P'),(2,'Barckey',3,81648291,98123938,'94201923C');
+INSERT INTO `proveedor` VALUES (1,'Ray Ban',1,92313812,92138121,'64920195P',1),(2,'Barckey',3,81648291,98123938,'94201923C',2);
 /*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -298,4 +304,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-02 20:51:28
+-- Dump completed on 2024-10-21 11:16:13

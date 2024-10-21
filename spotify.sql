@@ -1,8 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS `spotify` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `spotify`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: spotify
+-- Host: localhost    Database: spotify
 -- ------------------------------------------------------
 -- Server version	8.0.39
 
@@ -166,11 +164,14 @@ CREATE TABLE `playlists` (
   `playlist_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `song_count` int DEFAULT '0',
+  `id_song` int DEFAULT '0',
   `creation_date` date DEFAULT NULL,
+  `playlistscol` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`playlist_id`),
   KEY `user_email` (`user_email`),
-  CONSTRAINT `playlists_ibfk_1` FOREIGN KEY (`user_email`) REFERENCES `users` (`email`) ON DELETE CASCADE
+  KEY `song_in_playlist_idx` (`id_song`),
+  CONSTRAINT `playlists_ibfk_1` FOREIGN KEY (`user_email`) REFERENCES `users` (`email`) ON DELETE CASCADE,
+  CONSTRAINT `song_in_playlist` FOREIGN KEY (`id_song`) REFERENCES `songs` (`song_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -180,7 +181,7 @@ CREATE TABLE `playlists` (
 
 LOCK TABLES `playlists` WRITE;
 /*!40000 ALTER TABLE `playlists` DISABLE KEYS */;
-INSERT INTO `playlists` VALUES (1,'alejandr00@gmail.com','despecho',3,'2024-08-15'),(2,'eliwi12@gmail.com','para dormir',5,'2024-01-09');
+INSERT INTO `playlists` VALUES (1,'alejandr00@gmail.com','despecho',3,'2024-08-15',NULL),(2,'eliwi12@gmail.com','para dormir',5,'2024-01-09',NULL);
 /*!40000 ALTER TABLE `playlists` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,8 +258,8 @@ CREATE TABLE `subscriptions` (
   `renewal_date` date DEFAULT NULL,
   `payment_method` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`subscription_id`),
-  KEY `subscriptions_ibfk_1` (`user_email`),
-  CONSTRAINT `subscriptions_ibfk_1` FOREIGN KEY (`user_email`) REFERENCES `users` (`email`),
+  KEY `fk_paypal_idx` (`user_email`),
+  CONSTRAINT `fk_paypal` FOREIGN KEY (`user_email`) REFERENCES `paypal_accounts` (`user_email`),
   CONSTRAINT `subscriptions_chk_1` CHECK ((`payment_method` in (_utf8mb4'CreditCard',_utf8mb4'PayPal')))
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -371,4 +372,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-02 20:53:39
+-- Dump completed on 2024-10-21 11:16:57
